@@ -1,12 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine;
 using UnityEngine.Networking;
 
 public class WebDataFetcher : MonoBehaviour
 {
-    public string url = "https://4700.vercel.app/"; // URL of the website
+    public string url = "https://4700.vercel.app/api/getColor"; // URL of the website
     public Light targetLight; // Light object to update
     public ColorControlManager colorManager; // Reference to your color manager
 
@@ -45,14 +44,14 @@ public class WebDataFetcher : MonoBehaviour
         // Apply to Unity objects
         if (targetLight != null)
         {
-            targetLight.intensity = data.gammaC * 10f;
+            targetLight.intensity = data.lightness * 10f;
         }
         if (colorManager != null)
         {
-            colorManager.gammaC = data.gammaC;
-            colorManager.rC = data.rC;
-            colorManager.gC = data.gC;
-            colorManager.bC = data.bC;
+            colorManager.rC = data.red;
+            colorManager.gC = data.green;
+            colorManager.bC = data.blue;
+            colorManager.gammaC = data.lightness;
         }
     }
 }
@@ -60,9 +59,9 @@ public class WebDataFetcher : MonoBehaviour
 [System.Serializable]
 public class DataModel
 {
-    public float gammaC;
-    public float rC;
-    public float gC;
-    public float bC;
+    public float red;
+    public float green;
+    public float blue;
+    public float lightness;
 }
 
