@@ -13,7 +13,6 @@ public class DrainableObject : MonoBehaviour
 
     private void Awake()
     {
-        // 获取 SpriteRenderer 组件
         spriteRenderer = GetComponent<SpriteRenderer>();
         if (spriteRenderer != null)
         {
@@ -31,12 +30,6 @@ public class DrainableObject : MonoBehaviour
                 StopCoroutine(drainCoroutine);
             }
             drainCoroutine = StartCoroutine(DrainToWhite());
-
-            // 通知 ColorDrain 脚本目标颜色
-            if (colorDrainScript != null)
-            {
-                colorDrainScript.SetTargetColor(initialColor);
-            }
         }
     }
 

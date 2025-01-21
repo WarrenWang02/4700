@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 
-
 public class ColorDrain : MonoBehaviour
 {
     [Header("Sprites to Change")]
@@ -11,13 +10,6 @@ public class ColorDrain : MonoBehaviour
     public float colorChangeDuration = 5f; // 渐变持续时间
 
     private bool isDraining = false;
-    private Color targetColor = Color.white;
-    private Coroutine colorChangeCoroutine;
-
-    public void SetTargetColor(Color color)
-    {
-        targetColor = color;
-    }
 
     private void OnTriggerStay(Collider collision)
     {
@@ -29,20 +21,20 @@ public class ColorDrain : MonoBehaviour
                 isDraining = true;
                 drainable.StartDraining(this);
 
-                // 找到一个白色的Sprite进行颜色变化
+                // 找到第一个空闲（单位值为0）的 Sprite
                 foreach (var sprite in sprites)
                 {
-                    if (sprite.color == Color.white)
+                    var spriteUnit = sprite.GetComponent<SpriteUnit>();
+                    if (spriteUnit != null && spriteUnit.unitValue == 0) // 检查单位值是否为0
                     {
-                        if (colorChangeCoroutine != null)
-                        {
-                            StopCoroutine(colorChangeCoroutine);
-                        }
-
-                        colorChangeCoroutine = StartCoroutine(ChangeColor(sprite));
-                        break;
+                        StartCoroutine(ChangeColorGradually(spriteUnit, drainable.initialColor, drainable));
+                        return; // 找到一个空闲 Sprite 后立即退出
                     }
                 }
+
+                // 如果没有可用的 Sprite，停止 DrainableObject 的吸取
+                drainable.StopDraining();
+                isDraining = false;
             }
         }
         else if (Input.GetKeyUp(KeyCode.E))
@@ -50,34 +42,31 @@ public class ColorDrain : MonoBehaviour
             if (isDraining)
             {
                 isDraining = false;
-                if (colorChangeCoroutine != null)
-                {
-                    StopCoroutine(colorChangeCoroutine);
-                }
-                if (drainable != null)
-                {
-                    drainable.StopDraining();
-                }
+                drainable?.StopDraining();
             }
         }
     }
 
-    private IEnumerator ChangeColor(SpriteRenderer sprite)
+    private IEnumerator ChangeColorGradually(SpriteUnit spriteUnit, Color targetColor, DrainableObject drainable)
     {
-        Color initialColor = sprite.color;
+        Color initialColor = spriteUnit.unitColor;
         float elapsedTime = 0f;
 
-        while (elapsedTime < colorChangeDuration && isDraining)
+        while (elapsedTime < colorChangeDuration)
         {
             elapsedTime += Time.deltaTime;
             float t = elapsedTime / colorChangeDuration;
-            sprite.color = Color.Lerp(initialColor, targetColor, t);
+            spriteUnit.SetUnitValue(Color.Lerp(initialColor, targetColor, t), Mathf.Clamp(spriteUnit.unitValue + 1, 0, 5));
             yield return null;
         }
 
-        if (isDraining)
-        {
-            sprite.color = targetColor;
-        }
+        // 最终设置颜色和单位值
+        spriteUnit.SetUnitValue(targetColor, 5);
+
+        // 允许下一次吸取
+        isDraining = false;
+
+        // 停止当前的 DrainableObject 吸取
+        drainable.StopDraining();
     }
 }
