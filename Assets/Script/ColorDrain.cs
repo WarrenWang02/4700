@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+
 public class ColorDrain : MonoBehaviour
 {
     [Header("Sprites to Change")]
@@ -13,20 +14,20 @@ public class ColorDrain : MonoBehaviour
     private Color targetColor = Color.white;
     private Coroutine colorChangeCoroutine;
 
-    private void OnTriggerStay(Collider collision) // 适配3D环境
+    public void SetTargetColor(Color color)
     {
-        if (collision.CompareTag("drain") && Input.GetKey(KeyCode.E))
+        targetColor = color;
+    }
+
+    private void OnTriggerStay(Collider collision)
+    {
+        DrainableObject drainable = collision.GetComponent<DrainableObject>();
+        if (drainable != null && Input.GetKey(KeyCode.E))
         {
             if (!isDraining)
             {
                 isDraining = true;
-
-                // 从drain物体获取颜色值
-                SpriteRenderer drainRenderer = collision.GetComponent<SpriteRenderer>();
-                if (drainRenderer != null)
-                {
-                    targetColor = drainRenderer.color;
-                }
+                drainable.StartDraining(this);
 
                 // 找到一个白色的Sprite进行颜色变化
                 foreach (var sprite in sprites)
@@ -49,10 +50,13 @@ public class ColorDrain : MonoBehaviour
             if (isDraining)
             {
                 isDraining = false;
-
                 if (colorChangeCoroutine != null)
                 {
                     StopCoroutine(colorChangeCoroutine);
+                }
+                if (drainable != null)
+                {
+                    drainable.StopDraining();
                 }
             }
         }

@@ -21,7 +21,7 @@ public class DrainableObject : MonoBehaviour
         }
     }
 
-    public void StartDraining()
+    public void StartDraining(ColorDrain colorDrainScript)
     {
         if (!isDraining && spriteRenderer != null)
         {
@@ -31,6 +31,12 @@ public class DrainableObject : MonoBehaviour
                 StopCoroutine(drainCoroutine);
             }
             drainCoroutine = StartCoroutine(DrainToWhite());
+
+            // 通知 ColorDrain 脚本目标颜色
+            if (colorDrainScript != null)
+            {
+                colorDrainScript.SetTargetColor(initialColor);
+            }
         }
     }
 
