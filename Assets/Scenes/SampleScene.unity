@@ -1402,7 +1402,7 @@ MonoBehaviour:
   rC: 0
   gC: 0
   bC: 0
-  gammaC: 3.73
+  gammaC: 0
   rCThreshold: 0.8
   bridge2: {fileID: 1852612273}
   bridgeCollider: {fileID: 1013761447}
@@ -2166,6 +2166,53 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1508236810
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1508236812}
+  - component: {fileID: 1508236811}
+  m_Layer: 0
+  m_Name: ColorFetcher
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1508236811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508236810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e15935d33fb8d436caa6ed4c7f5b7bc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetLight: {fileID: 0}
+  colorManager: {fileID: 968626964}
+  apiUrl: https://4700.vercel.app/api/getColor
+--- !u!4 &1508236812
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1508236810}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1518782872
 GameObject:
   m_ObjectHideFlags: 0
@@ -2681,6 +2728,7 @@ SceneRoots:
   - {fileID: 536923677}
   - {fileID: 2049832443}
   - {fileID: 1638027324}
+  - {fileID: 1508236812}
   - {fileID: 968626965}
   - {fileID: 974883863}
   - {fileID: 987879445}
