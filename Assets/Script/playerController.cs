@@ -4,49 +4,47 @@ using UnityEngine;
 
 public class playerController : MonoBehaviour
 {
-    public float speed;
-    public float groundDist;
-    public float jumpForce;
+    public float speed = 5f; // Default speed
+    public float jumpForce = 5f; // Default jump force
+    public float groundDist = 0.5f; // Distance to check for ground
 
-    public LayerMask terrainLayer;
-    public Rigidbody rb;
-    public SpriteRenderer sr;
-    public bool isGrounded;
-    // Start is called before the first frame update
+    public LayerMask terrainLayer; // Layer for ground detection
+    private Rigidbody rb;
+    private SpriteRenderer sr;
+
+    private bool isGrounded;
+
     void Start()
     {
-        rb = gameObject.GetComponent<Rigidbody>(); //gameObject
+        rb = gameObject.GetComponent<Rigidbody>();
+        sr = gameObject.GetComponent<SpriteRenderer>();
     }
 
-    // Update is called once per frame
     void Update()
     {
-        RaycastHit hit;
-        Vector3 castPos = transform.position;
-        if (Physics.Raycast(castPos, -transform.up, out hit, Mathf.Infinity, terrainLayer)) {
-            if (hit.collider != null) { 
-                Vector3 movePos = transform.position;
-                movePos.y = hit.point.y + groundDist;
-                transform.position = movePos;
-            }
-        }
+        // Horizontal movement
         float x = Input.GetAxis("Horizontal");
-        float y = Input.GetAxis("Vertical");
-        Vector3 moveDir = new Vector3(x, 0, y);
-        rb.velocity = moveDir * speed;
+        float z = Input.GetAxis("Vertical");
+        Vector3 moveDir = new Vector3(x, 0, z) * speed;
 
-        if (x != 0 && x > 0)
-        {
-            sr.flipX = true;
-        }
-        else if (x != 0 && x < 0)
+        // Preserve existing Y velocity for natural gravity
+        moveDir.y = rb.velocity.y;
+        rb.velocity = moveDir;
+
+        // Flip sprite based on direction
+        if (x > 0)
         {
             sr.flipX = false;
         }
+        else if (x < 0)
+        {
+            sr.flipX = true;
+        }
 
+        // Ground check using Raycast
         isGrounded = Physics.Raycast(transform.position, -Vector3.up, groundDist, terrainLayer);
 
-        // Jump
+        // Jump logic
         if (Input.GetButtonDown("Jump") && isGrounded)
         {
             rb.velocity = new Vector3(rb.velocity.x, jumpForce, rb.velocity.z);
