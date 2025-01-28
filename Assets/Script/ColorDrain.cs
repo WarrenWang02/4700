@@ -19,6 +19,7 @@ public class ColorDrain : MonoBehaviour
     {
         HandleBagSelection();
         HandleBagReset();
+        HandleBagFill(); // Add functionality to fill color to a DrainableObject.
     }
 
     // Method to handle selecting bags with 1/2/3/4 keys.
@@ -41,6 +42,34 @@ public class ColorDrain : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Backspace) && selectedBagIndex != -1) // Check if backspace is pressed and a bag is selected.
         {
             spriteUnits[selectedBagIndex].ResetUnit(); // Reset the selected bag.
+        }
+    }
+
+    private void HandleBagFill()
+    {
+        if (Input.GetKeyDown(KeyCode.C) && selectedBagIndex != -1) // Check if D is pressed and a bag is selected.
+        {
+            // Perform a raycast to detect the object in front of the player.
+            RaycastHit hit;
+            Vector3 forward = transform.forward;
+            if (Physics.Raycast(transform.position, forward, out hit, 5f)) // Adjust the raycast distance as needed.
+            {
+                DrainableObject drainable = hit.collider.GetComponent<DrainableObject>();
+                if (drainable != null) // Ensure the object has a DrainableObject script.
+                {
+                    SpriteUnit selectedUnit = spriteUnits[selectedBagIndex];
+                    if (selectedUnit != null && selectedUnit.unitValue > 0) // Ensure the selected bag has a color to give.
+                    {
+                        // Call the `fillColor` method on the DrainableObject.
+                        bool success = drainable.FillColor(selectedUnit.unitColor, selectedUnit.unitValue);
+                        if (success)
+                        {
+                            // Reset the selected bag after successfully filling color.
+                            selectedUnit.ResetUnit();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -87,6 +116,8 @@ public class ColorDrain : MonoBehaviour
     private void OnTriggerStay(Collider collision)
     {
         DrainableObject drainable = collision.GetComponent<DrainableObject>();
+
+        // Handle draining with "E"
         if (drainable != null && Input.GetKey(KeyCode.E)) // Check if the collided object is drainable and the "E" key is pressed.
         {
             if (!isDraining && selectedBagIndex != -1) // Ensure a bag is selected before draining.
@@ -114,7 +145,24 @@ public class ColorDrain : MonoBehaviour
                 drainable?.StopDraining();
             }
         }
+
+        // Handle filling with "D"
+        if (drainable != null && Input.GetKeyDown(KeyCode.C)) // Check if the "D" key is pressed while in range of a DrainableObject.
+        {
+            SpriteUnit selectedUnit = spriteUnits[selectedBagIndex];
+            if (selectedUnit != null && selectedUnit.unitValue > 0) // Ensure the selected bag has a color to give.
+            {
+                // Call the `fillColor` method on the DrainableObject
+                bool success = drainable.FillColor(selectedUnit.unitColor, selectedUnit.unitValue);
+                if (success)
+                {
+                    // Reset the selected bag after successfully filling color
+                    selectedUnit.ResetUnit();
+                }
+            }
+        }
     }
+
 
     // Gradually changes the color of a SpriteUnit to match the targetColor, updating its value.
     private IEnumerator ChangeColorGradually(SpriteUnit spriteUnit, Color targetColor, DrainableObject drainable)
