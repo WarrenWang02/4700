@@ -8,7 +8,6 @@ public class playerController : MonoBehaviour
     public float jumpForce = 5f; // Default jump force
     public float groundDist = 0.5f; // Distance to check for ground
 
-    public LayerMask terrainLayer; // Layer for ground detection
     private Rigidbody rb;
     private SpriteRenderer sr;
 
@@ -41,8 +40,8 @@ public class playerController : MonoBehaviour
             sr.flipX = true;
         }
 
-        // Ground check using SphereCast
-        isGrounded = Physics.SphereCast(transform.position, 0.25f, Vector3.down, out RaycastHit hit, groundDist, terrainLayer);
+        // Ground check using SphereCast (detect any firm colliders)
+        isGrounded = Physics.SphereCast(transform.position, 0.25f, Vector3.down, out RaycastHit hit, groundDist);
 
         if (!isGrounded)
         {
