@@ -41,8 +41,13 @@ public class playerController : MonoBehaviour
             sr.flipX = true;
         }
 
-        // Ground check using Raycast
-        isGrounded = Physics.Raycast(transform.position, -Vector3.up, groundDist, terrainLayer);
+        // Ground check using SphereCast
+        isGrounded = Physics.SphereCast(transform.position, 0.25f, Vector3.down, out RaycastHit hit, groundDist, terrainLayer);
+
+        if (!isGrounded)
+        {
+            rb.AddForce(Vector3.down * 5f); // Apply downward force when not grounded
+        }
 
         // Jump logic
         if (Input.GetButtonDown("Jump") && isGrounded)
