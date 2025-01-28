@@ -4,63 +4,73 @@ using UnityEngine;
 public class DrainableObject : MonoBehaviour
 {
     [Header("Drain Settings")]
-    public Color initialColor = Color.red; // 初始颜色
-    public float drainDuration = 5f; // 颜色被抽取至白色的时间
+    public Color initialColor = Color.white; // Initial color of the object, editable in the inspector.
+    public int volume = 5; // Current volume of the object, editable in the inspector, max is 5.
 
-    private SpriteRenderer spriteRenderer;
-    private bool isDraining = false;
-    private Coroutine drainCoroutine;
+    private SpriteRenderer spriteRenderer; // Reference to the SpriteRenderer to update color visually.
+    private Coroutine drainCoroutine; // Reference to the active draining coroutine.
+    private bool isDraining = false; // Flag to indicate whether the object is currently being drained.
 
     private void Awake()
     {
-        spriteRenderer = GetComponent<SpriteRenderer>();
-        if (spriteRenderer != null)
-        {
-            spriteRenderer.color = initialColor; // 初始化物体颜色
-        }
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Get the SpriteRenderer component on this object.
+        UpdateSpriteColor(); // Initialize the sprite's color based on `initialColor` and `volume`.
     }
 
+    // Method to start draining this object when triggered by the player.
     public void StartDraining(ColorDrain colorDrainScript)
     {
-        if (!isDraining && spriteRenderer != null)
+        if (!isDraining && volume > 0) // Ensure the object is not already being drained and has volume left.
         {
             isDraining = true;
             if (drainCoroutine != null)
             {
-                StopCoroutine(drainCoroutine);
+                StopCoroutine(drainCoroutine); // Stop any active draining coroutine.
             }
-            drainCoroutine = StartCoroutine(DrainToWhite());
+            drainCoroutine = StartCoroutine(DrainVolume()); // Start the volume draining process.
         }
     }
 
+    // Method to stop draining this object.
     public void StopDraining()
     {
         if (isDraining)
         {
-            isDraining = false;
+            isDraining = false; // Reset the draining flag.
             if (drainCoroutine != null)
             {
-                StopCoroutine(drainCoroutine);
+                StopCoroutine(drainCoroutine); // Stop the active draining coroutine.
             }
         }
     }
 
-    private IEnumerator DrainToWhite()
+    // Coroutine to gradually reduce volume and update color in real-time.
+    private IEnumerator DrainVolume()
     {
-        Color currentColor = spriteRenderer.color;
-        float elapsedTime = 0f;
-
-        while (elapsedTime < drainDuration && isDraining)
+        while (volume > 0 && isDraining)
         {
-            elapsedTime += Time.deltaTime;
-            float t = elapsedTime / drainDuration;
-            spriteRenderer.color = Color.Lerp(currentColor, Color.white, t);
-            yield return null;
+            volume -= 1; // Reduce volume by 1.
+            UpdateSpriteColor(); // Update the sprite's color based on the new volume.
+
+            if (volume <= 0) // If volume is depleted, reset the initial color to white.
+            {
+                initialColor = Color.white;
+                UpdateSpriteColor(); // Ensure the sprite reflects the reset color.
+                StopDraining(); // Stop the draining process.
+                yield break; // Exit the coroutine.
+            }
+
+            yield return new WaitForSeconds(0.5f); // Wait for 0.5 seconds before reducing volume again.
         }
+    }
 
-        if (isDraining)
+    // Updates the sprite's color based on the current `initialColor` and `volume`.
+    private void UpdateSpriteColor()
+    {
+        if (spriteRenderer != null)
         {
-            spriteRenderer.color = Color.white;
+            float intensity = volume / 5f; // Calculate intensity as a fraction of the max volume.
+            spriteRenderer.color = Color.Lerp(Color.white, initialColor, intensity); // Blend between white and the initial color based on intensity.
         }
     }
 }
