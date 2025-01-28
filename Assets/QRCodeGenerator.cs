@@ -40,6 +40,15 @@ public class QRCodeGenerator : MonoBehaviour
         qrCodeTexture = GenerateQRCode(fullUrl);
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Q)) // 按下 Q 键切换显示状态
+        {
+            ToggleQRCodeDisplay();
+        }
+    }
+
+
     Texture2D GenerateQRCode(string text)
     {
         // 定义二维码的宽度和高度
