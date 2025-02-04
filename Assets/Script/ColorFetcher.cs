@@ -15,11 +15,13 @@ public class ColorDataFetcher : MonoBehaviour
     }
     
     public Light targetLight; // Light object to update
-    public ColorControlManager colorManager; 
-    public QRCodeGenerator QRGen;// Reference to your color manager
+    public ColorControlManager colorManager; // Reference to your color manager
+    public QRCodeGenerator QRGen;
 
     // URL of your Node.js server
-    public string apiUrl = "https://4700.vercel.app/api/  ?key=" + QRGen.uuidMD5;
+    private string GetFullApiUrl() {
+        return $"https://4700.vercel.app/api/getColor?key={QRGen.getUUID()}";
+    }
     private float fetchInterval = 30f; // 30 seconds
     private float lastFetchTime = -9999f; // A time in the past to make the first call immediately
 
@@ -47,7 +49,7 @@ public class ColorDataFetcher : MonoBehaviour
     // Fetch color data from the server
     IEnumerator FetchColorData()
     {
-        UnityWebRequest request = UnityWebRequest.Get(apiUrl);
+        UnityWebRequest request = UnityWebRequest.Get(GetFullApiUrl());
         yield return request.SendWebRequest();
 
         if (request.result == UnityWebRequest.Result.Success)

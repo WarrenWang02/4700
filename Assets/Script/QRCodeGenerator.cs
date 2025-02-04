@@ -13,7 +13,7 @@ public class QRCodeGenerator : MonoBehaviour
 
     private static string sessionGUID;
     private static string fullUrl;
-    public static string uuidMD5;
+    private static string uuidMD5;
 
     void Awake()
     {
@@ -87,5 +87,10 @@ public class QRCodeGenerator : MonoBehaviour
     public void ToggleQRCodeDisplay()
     {
         showQRCode = !showQRCode; // 切换显示状态
+    }
+
+    public string getUUID()
+    {
+        return uuidMD5; // 切换显示状态
     }
 }
