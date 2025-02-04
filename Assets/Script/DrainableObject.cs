@@ -65,7 +65,7 @@ public class DrainableObject : MonoBehaviour
     }
 
     // Updates the sprite's color based on the current `initialColor` and `volume`.
-    private void UpdateSpriteColor()
+    public void UpdateSpriteColor()
     {
         if (spriteRenderer != null)
         {

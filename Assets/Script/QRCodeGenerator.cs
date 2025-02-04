@@ -10,10 +10,10 @@ public class QRCodeGenerator : MonoBehaviour
     public bool showQRCode = false; 
     public Texture2D qrCodeTexture; // 用于显示生成的二维码
     public string baseUrl = "https://4700.vercel.app/"; // 基础 URL
-
+    public static string uuidMD5;
     private static string sessionGUID;
     private static string fullUrl;
-    private static string uuidMD5;
+    
 
     void Awake()
     {
@@ -45,6 +45,7 @@ public class QRCodeGenerator : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.V)) // 按下 V 键切换显示状态
         {
             ToggleQRCodeDisplay();
+            Debug.Log($"UUID:{uuidMD5}"); 
         }
     }
 
