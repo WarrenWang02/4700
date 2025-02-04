@@ -3190,12 +3190,16 @@ MonoBehaviour:
   redPlatform: {fileID: 1870295842}
   greenPlatform: {fileID: 568083067}
   bluePlatform: {fileID: 1132326980}
-  minHeight: 96
-  maxHeight: 102
-  defaultHeight: 96
+  redMinHeight: 96
+  redMaxHeight: 102
+  greenMinHeight: 99
+  greenMaxHeight: 105
+  blueMinHeight: 102
+  blueMaxHeight: 108
   colorThresholdMin: 10
   colorThresholdMax: 60
-  moveSpeed: 0.5
+  moveSpeed: 1
+  defaultHeight: 96
 --- !u!1 &461969129
 GameObject:
   m_ObjectHideFlags: 0
