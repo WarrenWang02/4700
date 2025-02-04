@@ -6,10 +6,11 @@ using TMPro;
 public class NPCDialogue : MonoBehaviour
 {
     [Header("UI Elements")]
-    public GameObject dialogueUI; // 包含所有对话UI的父对象
-    public TextMeshProUGUI dialogueText; // UI文本
-    public Button nextButton; // 继续对话的按钮
-    public GameObject interactIndicator; // "E" 按键指示
+    [SerializeField] private GameObject dialogueUI; // UI should be unique per NPC
+    [SerializeField] private TextMeshProUGUI dialogueText; // Ensure each NPC has a separate text field
+    [SerializeField] private Button nextButton; // Ensure each NPC has a separate button
+    [SerializeField] private GameObject interactIndicator; // Unique E key prompt per NPC
+
 
     [Header("Dialogue Settings")]
     public string[] dialogueLines; // 存储对话内容
@@ -20,11 +21,17 @@ public class NPCDialogue : MonoBehaviour
 
     private void Start()
     {
-        dialogueUI.SetActive(false); // 确保对话 UI 关闭
-        interactIndicator.SetActive(false); // 确保 E 按键指示关闭
+        dialogueUI.SetActive(false);
+        interactIndicator.SetActive(false);
 
-        nextButton.onClick.AddListener(AdvanceDialogue); // 绑定按钮事件
+        if (nextButton != null)
+        {
+            nextButton.onClick.RemoveAllListeners(); // Ensure no previous bindings exist
+            nextButton.onClick.AddListener(() => AdvanceDialogue()); // Assign this NPC's button
+        }
     }
+
+
 
     private void Update()
     {
@@ -37,25 +44,29 @@ public class NPCDialogue : MonoBehaviour
     private void StartDialogue()
     {
         isDialogueActive = true;
-        interactIndicator.SetActive(false); // 关闭E指示
-        dialogueUI.SetActive(true); // 显示UI
+        interactIndicator.SetActive(false);
+        dialogueUI.SetActive(true);
         currentLine = 0;
-        dialogueText.text = dialogueLines[currentLine]; // 显示第一句对话
+        
+        if (dialogueLines.Length > 0) 
+        {
+            dialogueText.text = dialogueLines[currentLine];
+        }
     }
 
     public void AdvanceDialogue()
     {
-        currentLine++;
-
-        if (currentLine < dialogueLines.Length)
+        if (currentLine < dialogueLines.Length - 1)
         {
-            dialogueText.text = dialogueLines[currentLine]; // 更新对话内容
+            currentLine++;
+            dialogueText.text = dialogueLines[currentLine]; // Only update THIS NPC's dialogue
         }
         else
         {
             EndDialogue();
         }
     }
+
 
     private void EndDialogue()
     {
