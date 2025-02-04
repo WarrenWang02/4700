@@ -4,6 +4,7 @@ using UnityEngine;
 public class SpriteUnit : MonoBehaviour
 {
     [Header("Bag Properties")]
+    //aaaa
     public Color unitColor = Color.white; // Current color of the sprite.
     public int unitValue = 0; // Current volume of the sprite, maximum is 5.
 
