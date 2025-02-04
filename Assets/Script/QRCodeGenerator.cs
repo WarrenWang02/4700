@@ -13,7 +13,7 @@ public class QRCodeGenerator : MonoBehaviour
 
     private static string sessionGUID;
     private static string fullUrl;
-    private static string uuidMD5;
+    public static string uuidMD5;
 
     void Awake()
     {
@@ -42,7 +42,7 @@ public class QRCodeGenerator : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q)) // 按下 Q 键切换显示状态
+        if (Input.GetKeyDown(KeyCode.V)) // 按下 V 键切换显示状态
         {
             ToggleQRCodeDisplay();
         }

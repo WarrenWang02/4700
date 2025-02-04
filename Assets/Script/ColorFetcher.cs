@@ -15,10 +15,11 @@ public class ColorDataFetcher : MonoBehaviour
     }
     
     public Light targetLight; // Light object to update
-    public ColorControlManager colorManager; // Reference to your color manager
+    public ColorControlManager colorManager; 
+    public QRCodeGenerator QRGen;// Reference to your color manager
 
     // URL of your Node.js server
-    public string apiUrl = "https://4700.vercel.app/api/getColor";
+    public string apiUrl = "https://4700.vercel.app/api/  ?key=" + QRGen.uuidMD5;
     private float fetchInterval = 30f; // 30 seconds
     private float lastFetchTime = -9999f; // A time in the past to make the first call immediately
 
