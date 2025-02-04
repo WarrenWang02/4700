@@ -7,24 +7,31 @@ public class ColorPlatformManager : MonoBehaviour
     public DrainableObject redTarget;
     public DrainableObject greenTarget;
     public DrainableObject blueTarget;
-    
+
     [Header("Platform References")]
     public Transform redPlatform;
     public Transform greenPlatform;
     public Transform bluePlatform;
-    
+
     [Header("Height Settings")]
-    public float minHeight = 96f; // Lowest possible height
-    public float maxHeight = 102f; // Highest possible height
-    public float defaultHeight = 96f; // Default starting height
-    
+    // Individual min/max height for each platform
+    public float redMinHeight = 96f, redMaxHeight = 102f;
+    public float greenMinHeight = 99f, greenMaxHeight = 105f;
+    public float blueMinHeight = 102f, blueMaxHeight = 108f;
+
     public float colorThresholdMin = 10f;
     public float colorThresholdMax = 60f;
     public float moveSpeed = 2f; // Speed of platform animation
-    
+
+    public float defaultHeight = 96f;
+
+    private float redTargetHeight;
+    private float greenTargetHeight;
+    private float blueTargetHeight;
+
     private void Start()
     {
-        // Ensure platforms start at default height
+        // Ensure platforms start at their minimum height
         if (redPlatform != null) redPlatform.localPosition = new Vector3(redPlatform.localPosition.x, defaultHeight, redPlatform.localPosition.z);
         if (greenPlatform != null) greenPlatform.localPosition = new Vector3(greenPlatform.localPosition.x, defaultHeight, greenPlatform.localPosition.z);
         if (bluePlatform != null) bluePlatform.localPosition = new Vector3(bluePlatform.localPosition.x, defaultHeight, bluePlatform.localPosition.z);
@@ -32,50 +39,44 @@ public class ColorPlatformManager : MonoBehaviour
 
     private void Update()
     {
-        if (redTarget != null) StartCoroutine(AdjustPlatform(redPlatform, CalculateHeight(redTarget.initialColor, Color.red)));
-        if (greenTarget != null) StartCoroutine(AdjustPlatform(greenPlatform, CalculateHeight(greenTarget.initialColor, Color.green)));
-        if (blueTarget != null) StartCoroutine(AdjustPlatform(bluePlatform, CalculateHeight(blueTarget.initialColor, Color.blue)));
-        // Debug.Log($"Moving red to height: {CalculateHeight(redTarget.initialColor, Color.red)}"); // Debug log
-        // AdjustPlatform(redPlatform, 91);//debug
+        if (redTarget != null) redTargetHeight = CalculateHeight(redTarget.initialColor, Color.red, redMinHeight, redMaxHeight);
+        if (greenTarget != null) greenTargetHeight = CalculateHeight(greenTarget.initialColor, Color.green, greenMinHeight, greenMaxHeight);
+        if (blueTarget != null) blueTargetHeight = CalculateHeight(blueTarget.initialColor, Color.blue, blueMinHeight, blueMaxHeight);
+
+        // Move platforms smoothly
+        MovePlatformTowardsTarget(redPlatform, redTargetHeight);
+        MovePlatformTowardsTarget(greenPlatform, greenTargetHeight);
+        MovePlatformTowardsTarget(bluePlatform, blueTargetHeight);
     }
 
-    private float CalculateHeight(Color objectColor, Color referenceColor)
+    private float CalculateHeight(Color objectColor, Color referenceColor, float minHeight, float maxHeight)
     {
         float colorDistance = Mathf.Sqrt(
             Mathf.Pow(objectColor.r * 255 - referenceColor.r * 255, 2) +
             Mathf.Pow(objectColor.g * 255 - referenceColor.g * 255, 2) +
             Mathf.Pow(objectColor.b * 255 - referenceColor.b * 255, 2)
         );
-        
-        if (colorDistance >= colorThresholdMax) {
-            //Debug.Log("too difference " + defaultHeight); // Debug message
-            return defaultHeight;
-        }
-        
+
+        // 🛠 If color is white (default state), return defaultHeight
+        if (objectColor == Color.white) return defaultHeight;
+
+        if (colorDistance >= colorThresholdMax) return minHeight;
         if (colorDistance <= colorThresholdMin) return maxHeight;
-        
-        return defaultHeight + (maxHeight - defaultHeight) * ((colorThresholdMax - colorDistance) / (colorThresholdMax - colorThresholdMin));
+
+        return minHeight + (maxHeight - minHeight) * ((colorThresholdMax - colorDistance) / (colorThresholdMax - colorThresholdMin));
     }
 
-    private IEnumerator AdjustPlatform(Transform platform, float targetHeight)
+
+    private void MovePlatformTowardsTarget(Transform platform, float targetHeight)
     {
-        //Debug.Log($"Moving {platform.name} to height: {targetHeight}"); // Debug log
-        Vector3 startPosition = platform.localPosition;
-        Vector3 targetPosition = new Vector3(startPosition.x, targetHeight, startPosition.z);
+        if (platform == null) return;
 
-        float elapsedTime = 0f;
-        float duration = 1f / moveSpeed; // Adjust movement duration based on speed
+        float currentHeight = platform.localPosition.y;
 
-        while (elapsedTime < duration)
+        if (Mathf.Abs(currentHeight - targetHeight) > 0.01f) // Only move if there's a meaningful difference
         {
-            float t = Mathf.Clamp01(elapsedTime / duration); // Ensure t is between 0 and 1
-            platform.localPosition = Vector3.Lerp(startPosition, targetPosition, t);
-            elapsedTime += Time.deltaTime;
-            yield return null;
+            float newHeight = Mathf.MoveTowards(currentHeight, targetHeight, moveSpeed * Time.deltaTime);
+            platform.localPosition = new Vector3(platform.localPosition.x, newHeight, platform.localPosition.z);
         }
-
-        platform.localPosition = targetPosition; // Ensure it reaches the exact final position
     }
-
-
 }

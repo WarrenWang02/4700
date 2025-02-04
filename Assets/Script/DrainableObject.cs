@@ -74,6 +74,14 @@ public class DrainableObject : MonoBehaviour
         }
     }
 
+    //currently only for cheat
+    public void ResetToWhite()
+    {
+        initialColor = Color.white; // Reset color to white
+        volume = 0; // Reset volume to 0
+        UpdateSpriteColor(); // Apply the change visually
+    }
+
     public bool FillColor(Color color, int volumeToAdd)
     {
         if (volume > 0) return false; // Only allow filling if the object is currently white (volume == 0).

@@ -20,9 +20,33 @@ public class ColorDrain : MonoBehaviour
         HandleBagSelection();
         HandleBagReset();
         HandleBagFill(); // Add functionality to fill color to a DrainableObject.
+        HandleDebugCheat(); // Call new cheat method
     }
 
     // Method to handle selecting bags with 1/2/3/4 keys.
+
+    private void HandleDebugCheat()
+    {
+        if (spriteUnits.Length > 0) // Ensure at least one sprite bag exists
+        {
+            if (Input.GetKeyDown(KeyCode.I)) // Press 'I' for red
+            {
+                spriteUnits[0].SetUnitValue(Color.red, 5);
+                Debug.Log("Cheat activated: First bag filled with RED");
+            }
+            else if (Input.GetKeyDown(KeyCode.O)) // Press 'O' for green
+            {
+                spriteUnits[0].SetUnitValue(Color.green, 5);
+                Debug.Log("Cheat activated: First bag filled with GREEN");
+            }
+            else if (Input.GetKeyDown(KeyCode.P)) // Press 'P' for blue
+            {
+                spriteUnits[0].SetUnitValue(Color.blue, 5);
+                Debug.Log("Cheat activated: First bag filled with BLUE");
+            }
+        }
+    }
+
     private void HandleBagSelection()
     {
         for (int i = 0; i < sprites.Length; i++)
@@ -161,6 +185,14 @@ public class ColorDrain : MonoBehaviour
                 }
             }
         }
+
+        // Cheat: Reset Drainable Object with Backspace
+        if (drainable != null && Input.GetKeyDown(KeyCode.Backspace))
+        {
+            drainable.ResetToWhite(); // Call a method to reset color & volume
+            Debug.Log($"Cheat activated: {drainable.name} reset to white with volume 0");
+        }
+        
     }
 
 
